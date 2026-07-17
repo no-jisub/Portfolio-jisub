@@ -3,5 +3,14 @@ dist/
 work/
 outputs/
 .agents/
-.env.local
-.env.*.local
+.firebase/
+.openai/
+.env*
+!.env.example
+
+# Firebase Admin / private credentials
+*firebase-adminsdk*.json
+service-account*.json
+serviceAccount*.json
+*.pem
+*.key

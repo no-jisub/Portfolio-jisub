@@ -1,5 +1,6 @@
 import { getApp, getApps, initializeApp } from 'firebase/app'
 import { getAnalytics, isSupported } from 'firebase/analytics'
+import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -13,6 +14,7 @@ const firebaseConfig = {
 }
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
+const auth = getAuth(app)
 const db = getFirestore(app)
 
 const analyticsPromise =
@@ -22,4 +24,4 @@ const analyticsPromise =
         .then((supported) => (supported ? getAnalytics(app) : null))
         .catch(() => null)
 
-export { analyticsPromise, app, db }
+export { analyticsPromise, app, auth, db }

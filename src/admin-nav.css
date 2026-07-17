@@ -1,0 +1,41 @@
+.nav-admin-button {
+  border: 1px solid #3b424f;
+  border-radius: 999px;
+  padding: 7px 11px;
+  background: transparent;
+  color: #c4c9d3;
+  font: 700 11px var(--sans);
+  cursor: pointer;
+}
+
+.nav-admin-button:hover,
+.nav-admin-button.active {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.nav-admin-button:disabled { cursor: wait; opacity: .6; }
+
+.admin-toast {
+  position: fixed;
+  z-index: 20;
+  top: 86px;
+  right: 24px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid #46505f;
+  border-radius: 10px;
+  background: #171c25;
+  color: #dce1e8;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .28);
+  font-size: 12px;
+}
+
+.admin-toast.success { border-color: #467460; color: #9de0bd; }
+.admin-toast.error { border-color: #804d4d; color: #ffaaa3; }
+
+@media (max-width: 620px) {
+  .site-header nav a { display: none; }
+  .site-header nav { margin-left: auto; }
+  .admin-toast { top: 74px; right: 14px; left: 14px; text-align: center; }
+}

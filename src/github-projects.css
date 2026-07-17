@@ -1,0 +1,199 @@
+.github-projects {
+  padding-top: 118px;
+  padding-bottom: 120px;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(23, 36, 60, .22), transparent 55%);
+}
+
+.projects-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 60px;
+  margin-bottom: 50px;
+}
+
+.projects-heading h2 {
+  margin: 24px 0 0;
+  font-size: clamp(34px, 4.1vw, 58px);
+  letter-spacing: -.064em;
+  line-height: 1.13;
+}
+
+.projects-aside { max-width: 360px; }
+
+.projects-aside p {
+  margin-bottom: 13px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.projects-aside a {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #555d69;
+  color: #d7dbe2;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.projects-edit-button {
+  display: block;
+  margin-top: 16px;
+  padding: 9px 13px;
+  border: 1px solid var(--coral);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--coral);
+  font: 700 12px var(--sans);
+  cursor: pointer;
+}
+
+.projects-editor {
+  display: grid;
+  grid-template-columns: .75fr 1.5fr auto;
+  gap: 25px;
+  align-items: end;
+  margin: -20px 0 28px;
+  padding: 22px;
+  border: 1px solid #3c4657;
+  border-radius: 16px;
+  background: #171c25;
+}
+
+.projects-editor > div > strong { font-size: 14px; }
+.projects-editor > div > p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+.projects-editor-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.projects-editor-fields label { color: #858e9d; font: 500 10px var(--mono); }
+.projects-editor-fields select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 9px 10px;
+  border: 1px solid #3b4350;
+  border-radius: 8px;
+  background: #10141b;
+  color: #e6e9ee;
+  font: 600 12px var(--sans);
+}
+
+.projects-editor-actions { display: flex; gap: 7px; }
+.projects-editor-actions button {
+  padding: 9px 12px;
+  border: 1px solid #3f4754;
+  border-radius: 8px;
+  background: transparent;
+  color: #cbd0d8;
+  font: 700 11px var(--sans);
+  cursor: pointer;
+}
+.projects-editor-actions button:last-child { border-color: var(--coral); background: var(--coral); color: #251312; }
+.projects-editor-actions button:disabled { cursor: wait; opacity: .6; }
+.projects-editor-status { min-height: 18px; margin: -17px 0 20px; font-size: 12px; }
+.projects-editor-status.success { color: #87d6ae; }
+.projects-editor-status.error { color: #ff9b92; }
+
+.repository-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.repository-card {
+  min-width: 0;
+  border: 1px solid #303744;
+  border-radius: 18px;
+  background: #12161e;
+  transition: transform .25s, border-color .25s, background .25s;
+}
+
+.repository-card:hover {
+  transform: translateY(-4px);
+  border-color: #596170;
+  background: #161b25;
+}
+
+.repository-card > a {
+  display: flex;
+  min-height: 285px;
+  height: 100%;
+  flex-direction: column;
+  padding: 25px;
+}
+
+.repository-top {
+  display: flex;
+  justify-content: space-between;
+  color: #7f8795;
+  font: 500 10px var(--mono);
+}
+
+.repository-top svg { width: 20px; color: #aab1bd; }
+
+.repository-card h3 {
+  margin: 31px 0 12px;
+  font-size: clamp(23px, 2.3vw, 31px);
+  letter-spacing: -.05em;
+  overflow-wrap: anywhere;
+}
+
+.repository-card p {
+  max-width: 420px;
+  margin-bottom: 26px;
+  color: #aeb5c1;
+  font-size: 13px;
+}
+
+.repository-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  margin-top: auto;
+  color: #7e8694;
+  font: 500 10px var(--mono);
+}
+
+.repository-meta span,
+.repository-meta time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.repository-meta i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--coral);
+}
+
+.repository-card strong {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 17px;
+  border-top: 1px solid #292f39;
+  color: #dce0e6;
+  font-size: 12px;
+}
+
+.repository-card:hover strong { color: var(--coral); }
+
+@media (max-width: 800px) {
+  .github-projects { padding-top: 76px; padding-bottom: 78px; }
+  .projects-heading { display: block; margin-bottom: 34px; }
+  .projects-aside { margin-top: 20px; }
+  .repository-grid { grid-template-columns: 1fr; }
+  .repository-card > a { min-height: 250px; }
+  .projects-editor { grid-template-columns: 1fr; margin-top: 0; }
+  .projects-editor-actions { justify-content: flex-end; }
+}
+
+@media (max-width: 395px) {
+  .projects-heading h2 { font-size: 34px; }
+  .repository-card > a { padding: 21px; }
+  .projects-editor-fields { grid-template-columns: 1fr; }
+}
