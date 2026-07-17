@@ -13,13 +13,36 @@ const GithubIcon = () => <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1
 const Arrow = () => <span aria-hidden="true">↗</span>
 const ADMIN_EMAIL = 'shwltjq1@gmail.com'
 const GITHUB_USERNAME = 'no-jisub'
-const FALLBACK_REPOSITORIES = [
+const PERSONAL_FALLBACK_REPOSITORIES = [
   { id: 'golf-coach', name: 'golf-coach', description: '초보자를 위한 단계별 골프 자세 코칭 프로그램', language: 'Python', html_url: 'https://github.com/no-jisub/golf-coach', pushed_at: '2026-06-26T11:50:09Z', stargazers_count: 0 },
   { id: 'I2', name: 'I2', description: '제2회 강냉톤 프로젝트', language: 'Java', html_url: 'https://github.com/no-jisub/I2', pushed_at: '2026-05-22T18:27:29Z', stargazers_count: 0 },
   { id: 'protein_front', name: 'protein_front', description: '사이드 프로젝트의 프론트엔드 애플리케이션', language: 'TypeScript', html_url: 'https://github.com/no-jisub/protein_front', pushed_at: '2026-01-21T08:33:30Z', stargazers_count: 0 },
   { id: 'javap', name: 'javap', description: 'Java 학습 과정과 실습 코드를 기록한 저장소', language: 'Java', html_url: 'https://github.com/no-jisub/javap', pushed_at: '2023-06-04T13:22:36Z', stargazers_count: 0 },
 ]
-const DEFAULT_REPOSITORY_NAMES = FALLBACK_REPOSITORIES.map((repository) => repository.name)
+const FALLBACK_REPOSITORIES = [
+  ...PERSONAL_FALLBACK_REPOSITORIES.map((repository) => ({
+    ...repository,
+    full_name: `${GITHUB_USERNAME}/${repository.name}`,
+    owner: { login: GITHUB_USERNAME },
+  })),
+  {
+    id: 'KICT2022/frontend',
+    name: 'frontend',
+    full_name: 'KICT2022/frontend',
+    owner: { login: 'KICT2022' },
+    description: '증상별 약 추천, 약 정보 제공 및 복약 알림 서비스',
+    language: 'Dart',
+    html_url: 'https://github.com/KICT2022/frontend',
+    pushed_at: '2026-05-22T18:35:59Z',
+    stargazers_count: 1,
+  },
+]
+const DEFAULT_REPOSITORY_NAMES = [
+  'no-jisub/golf-coach',
+  'KICT2022/frontend',
+  'no-jisub/protein_front',
+  'no-jisub/javap',
+]
 
 const formatRepositoryDate = (date) => new Intl.DateTimeFormat('ko-KR', {
   year: 'numeric',
@@ -40,8 +63,9 @@ function GithubProjects({ isAdmin }) {
     (snapshot) => {
       const names = snapshot.data()?.repositoryNames
       if (Array.isArray(names) && names.length === 4 && names.every((name) => typeof name === 'string')) {
-        setSelectedNames(names)
-        setDraftNames(names)
+        const normalizedNames = names.map((name) => name.includes('/') ? name : `${GITHUB_USERNAME}/${name}`)
+        setSelectedNames(normalizedNames)
+        setDraftNames(normalizedNames)
       }
     },
     (error) => console.warn('프로젝트 설정을 불러오지 못했습니다:', error),
@@ -50,27 +74,42 @@ function GithubProjects({ isAdmin }) {
   useEffect(() => {
     const controller = new AbortController()
 
-    fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&direction=desc&per_page=100`, {
-      headers: {
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
-      signal: controller.signal,
-    })
+    const headers = {
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    }
+    const fetchRepositoryData = (url) => fetch(url, { headers, signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error(`GitHub API ${response.status}`)
         return response.json()
       })
-      .then((data) => {
-        const repositories = data
+
+    Promise.allSettled([
+      fetchRepositoryData(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&direction=desc&per_page=100`),
+      fetchRepositoryData('https://api.github.com/repos/KICT2022/frontend'),
+    ])
+      .then(([personalResult, organizationResult]) => {
+        const personalRepositories = personalResult.status === 'fulfilled' ? personalResult.value : []
+        const organizationRepositories = organizationResult.status === 'fulfilled' ? [organizationResult.value] : []
+        const repositories = [...personalRepositories, ...organizationRepositories]
           .filter((repository) => !repository.fork && !repository.archived)
           .map((repository) => ({
             ...repository,
-            description: repository.description || '개발 과정과 실험을 기록한 저장소',
+            description: repository.full_name === 'KICT2022/frontend'
+              ? '증상별 약 추천, 약 정보 제공 및 복약 알림 서비스'
+              : repository.description || '개발 과정과 실험을 기록한 저장소',
             language: repository.language || 'Code',
           }))
 
-        if (repositories.length) setAvailableRepositories(repositories)
+        if (repositories.length) {
+          const mergedRepositories = new Map(
+            [...FALLBACK_REPOSITORIES, ...repositories].map((repository) => [repository.full_name, repository]),
+          )
+          setAvailableRepositories([...mergedRepositories.values()])
+        }
+        if (personalResult.status === 'rejected' || organizationResult.status === 'rejected') {
+          console.warn('일부 GitHub 저장소를 갱신하지 못해 기본 정보를 사용합니다.')
+        }
       })
       .catch((error) => {
         if (error.name !== 'AbortError') console.warn('GitHub 저장소를 갱신하지 못했습니다:', error)
@@ -81,7 +120,7 @@ function GithubProjects({ isAdmin }) {
   }, [])
 
   const repositoryMap = new Map(
-    [...FALLBACK_REPOSITORIES, ...availableRepositories].map((repository) => [repository.name, repository]),
+    [...FALLBACK_REPOSITORIES, ...availableRepositories].map((repository) => [repository.full_name, repository]),
   )
   const repositories = selectedNames.map((name) => repositoryMap.get(name)).filter(Boolean)
 
@@ -143,7 +182,7 @@ function GithubProjects({ isAdmin }) {
               <label key={index}>0{index + 1}
                 <select value={name} onChange={(event) => updateDraft(index, event.target.value)} disabled={saving}>
                   {availableRepositories.map((repository) => (
-                    <option key={repository.id} value={repository.name} disabled={draftNames.some((selected, position) => position !== index && selected === repository.name)}>{repository.name}</option>
+                    <option key={repository.id} value={repository.full_name} disabled={draftNames.some((selected, position) => position !== index && selected === repository.full_name)}>{repository.full_name}</option>
                   ))}
                 </select>
               </label>
@@ -162,6 +201,7 @@ function GithubProjects({ isAdmin }) {
           <article className="repository-card" key={repository.id}>
             <a href={repository.html_url} target="_blank" rel="noreferrer" aria-label={`${repository.name} GitHub 저장소 열기`}>
               <div className="repository-top"><span>0{index + 1}</span><GithubIcon /></div>
+              {repository.owner?.login !== GITHUB_USERNAME && <small className="repository-owner">Organization · {repository.owner?.login}</small>}
               <h3>{repository.name}</h3>
               <p>{repository.description}</p>
               <div className="repository-meta">

@@ -36,9 +36,17 @@ service cloud.firestore {
         request.resource.data.repositoryNames is list &&
         request.resource.data.repositoryNames.size() == 4 &&
         request.resource.data.repositoryNames[0] is string &&
+        request.resource.data.repositoryNames[0].size() >= 1 &&
+        request.resource.data.repositoryNames[0].size() <= 100 &&
         request.resource.data.repositoryNames[1] is string &&
+        request.resource.data.repositoryNames[1].size() >= 1 &&
+        request.resource.data.repositoryNames[1].size() <= 100 &&
         request.resource.data.repositoryNames[2] is string &&
+        request.resource.data.repositoryNames[2].size() >= 1 &&
+        request.resource.data.repositoryNames[2].size() <= 100 &&
         request.resource.data.repositoryNames[3] is string &&
+        request.resource.data.repositoryNames[3].size() >= 1 &&
+        request.resource.data.repositoryNames[3].size() <= 100 &&
         request.resource.data.repositoryNames[0] != request.resource.data.repositoryNames[1] &&
         request.resource.data.repositoryNames[0] != request.resource.data.repositoryNames[2] &&
         request.resource.data.repositoryNames[0] != request.resource.data.repositoryNames[3] &&

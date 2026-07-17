@@ -132,6 +132,19 @@
 
 .repository-top svg { width: 20px; color: #aab1bd; }
 
+.repository-owner {
+  align-self: flex-start;
+  margin-top: 22px;
+  padding: 4px 8px;
+  border: 1px solid #465164;
+  border-radius: 999px;
+  color: #aeb8c8;
+  font: 500 9px var(--mono);
+  letter-spacing: .03em;
+}
+
+.repository-owner + h3 { margin-top: 13px; }
+
 .repository-card h3 {
   margin: 31px 0 12px;
   font-size: clamp(23px, 2.3vw, 31px);
