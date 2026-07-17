@@ -1,0 +1,16 @@
+node_modules/
+dist/
+work/
+outputs/
+.agents/
+.firebase/
+.openai/
+.env*
+!.env.example
+
+# Firebase Admin / private credentials
+*firebase-adminsdk*.json
+service-account*.json
+serviceAccount*.json
+*.pem
+*.key

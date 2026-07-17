@@ -1,0 +1,54 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null &&
+        request.auth.token.email_verified == true &&
+        request.auth.token.email == 'shwltjq1@gmail.com';
+    }
+
+    match /guestbookEntries/{entryId} {
+      allow read: if true;
+
+      allow create: if
+        request.resource.data.keys().hasOnly(['name', 'message', 'createdAt']) &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() >= 1 &&
+        request.resource.data.name.size() <= 20 &&
+        request.resource.data.message is string &&
+        request.resource.data.message.size() >= 1 &&
+        request.resource.data.message.size() <= 300 &&
+        request.resource.data.createdAt is timestamp &&
+        request.resource.data.createdAt == request.time;
+
+      allow delete: if isAdmin();
+      allow update: if false;
+    }
+
+    match /siteConfig/{configId} {
+      allow read: if configId == 'githubProjects';
+
+      allow create, update: if
+        isAdmin() &&
+        configId == 'githubProjects' &&
+        request.resource.data.keys().hasOnly(['repositoryNames', 'updatedAt']) &&
+        request.resource.data.repositoryNames is list &&
+        request.resource.data.repositoryNames.size() == 4 &&
+        request.resource.data.repositoryNames[0] is string &&
+        request.resource.data.repositoryNames[1] is string &&
+        request.resource.data.repositoryNames[2] is string &&
+        request.resource.data.repositoryNames[3] is string &&
+        request.resource.data.repositoryNames[0] != request.resource.data.repositoryNames[1] &&
+        request.resource.data.repositoryNames[0] != request.resource.data.repositoryNames[2] &&
+        request.resource.data.repositoryNames[0] != request.resource.data.repositoryNames[3] &&
+        request.resource.data.repositoryNames[1] != request.resource.data.repositoryNames[2] &&
+        request.resource.data.repositoryNames[1] != request.resource.data.repositoryNames[3] &&
+        request.resource.data.repositoryNames[2] != request.resource.data.repositoryNames[3] &&
+        request.resource.data.updatedAt is timestamp &&
+        request.resource.data.updatedAt == request.time;
+
+      allow delete: if false;
+    }
+  }
+}
