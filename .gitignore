@@ -3,3 +3,5 @@ dist/
 work/
 outputs/
 .agents/
+.env.local
+.env.*.local
